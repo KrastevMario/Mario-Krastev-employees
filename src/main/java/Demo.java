@@ -9,6 +9,16 @@ public class Demo {
     public static void main(String[] args) {
         String filePath = "./";
         String fileName = "employee_info.txt";
+
+        /*
+                        TEST WITH INPUT BY HAND
+        Scanner keyboard = new Scanner(System.in);
+        System.out.println("Insert the file path (without the file name: ./folder/):");
+        filePath = keyboard.nextLine();
+        System.out.println("Insert the file Name (without the path: name.txt):");
+        fileName = keyboard.nextLine();
+         */
+
         Set<Employee> employees = (Set<Employee>) FileDataParser.getAllEmployees(filePath, fileName);
         //show the top 2 employees who have worked on a project for the longest time (not necessary the same project)
         int numberToShowEmployees = 2;
