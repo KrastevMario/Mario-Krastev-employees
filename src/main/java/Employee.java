@@ -104,22 +104,24 @@ public class Employee {
     }
 
     public boolean isColliding(Employee secondEmployee){
-        if(this.getDateTo().toEpochDay() < secondEmployee.getDateFrom().toEpochDay() ||
-                secondEmployee.getDateTo().toEpochDay() < this.getDateFrom().toEpochDay()){
-            return false;
-        }
-        return true;
+//        if(this.getDateTo().toEpochDay() < secondEmployee.getDateFrom().toEpochDay() ||
+//                secondEmployee.getDateTo().toEpochDay() < this.getDateFrom().toEpochDay()){
+//            return false;
+//        }
+        return secondEmployee.getDateTo().compareTo(this.getDateFrom()) > 0;
     }
 
-    //use it after checking the collision
     public long getEmployeesTimeLength(Employee secondEmployee){
         //calculate the total time that they have spent together.
+        if(!this.isColliding(secondEmployee)){
+            return -1;
+        }
         long sharedStartingTime;
         long sharedFinishingTime;
         if(this.getDateFrom().toEpochDay() < secondEmployee.getDateFrom().toEpochDay()){
-            sharedStartingTime = this.getDateFrom().toEpochDay();
-        }else{
             sharedStartingTime = secondEmployee.getDateFrom().toEpochDay();
+        }else{
+            sharedStartingTime = this.getDateFrom().toEpochDay();
         }
 
         if(this.getDateTo().toEpochDay() < secondEmployee.getDateTo().toEpochDay()){

@@ -4,6 +4,9 @@ import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Demo {
     public static void main(String[] args) {
@@ -74,7 +77,7 @@ public class Demo {
         //get the 2 employees with the highest time on the same project
         Employee mostTimeEmployee = new Employee();
         for (Employee employee : employees){
-            if(employee.getTimeSpentOnProjectWithPartner() > mostTimeEmployee.getTimeSpentOnProjectWithPartner()){
+            if(employee.getTimeSpentOnProjectWithPartner() >= mostTimeEmployee.getTimeSpentOnProjectWithPartner()){
                 mostTimeEmployee = employee;
             }
         }
@@ -86,6 +89,77 @@ public class Demo {
                     + " | employee " + mostTimeEmployee.getPartnerId() + " | have worked together for "
                     + mostTimeEmployee.getTimeSpentOnProjectWithPartner() + " days");
         }
+
+        //- get the team who has worked the most together
+        /*
+        check the first employee, check the 2nd employee. If there is no combination with this people in a team in our collection
+        create a new team. Insert in the new team the time that they have worked together.
+        If there's a combination, add the time to the team.
+
+         */
+        List<Team> teams = new CopyOnWriteArrayList<>();
+        for (Employee mainEmployee : employees){
+            for (Employee checkingEmployee : employees){
+                if(mainEmployee.getEmpId() == checkingEmployee.getEmpId() || mainEmployee.getProjectId() != checkingEmployee.getProjectId()){
+                    continue;
+                }
+                if(!mainEmployee.isColliding(checkingEmployee) && !checkingEmployee.isColliding(mainEmployee)){
+                    System.out.println("SKIPPED " + checkingEmployee.getEmpId() + " " + mainEmployee.getEmpId());
+                    continue;
+                }
+                if(teams.isEmpty()){
+                    teams.add(new Team(mainEmployee.getEmpId(), checkingEmployee.getEmpId(), mainEmployee.getEmployeesTimeLength(checkingEmployee)));
+                    continue;
+                }
+                System.out.println(mainEmployee.getEmpId() + " , " + checkingEmployee.getEmpId());
+                boolean teamExists = false;
+                int teamPosition = -1;
+                for (Team team : teams){
+                    if(team.getFirstEmpId() == mainEmployee.getEmpId() && team.getSecondEmpId() == checkingEmployee.getEmpId()
+                        || team.getSecondEmpId() == mainEmployee.getEmpId() && team.getFirstEmpId() == checkingEmployee.getEmpId()){
+                        teamExists = true;
+                        teamPosition++;
+                        break;
+                    }
+                }
+                if(!teamExists){
+                    System.out.println("NEW " + checkingEmployee.getEmpId() + " " + mainEmployee.getEmpId());
+                    teams.add(new Team(mainEmployee.getEmpId(), checkingEmployee.getEmpId(), mainEmployee.getEmployeesTimeLength(checkingEmployee)));
+                }else{
+                    teams.set(teamPosition, teams.get(teamPosition).setTimeWorkedTogetherReturningTeam(
+                            teams.get(teamPosition).getTimeWorkedTogether() + mainEmployee.getEmployeesTimeLength(checkingEmployee)
+                    ));
+                    //System.out.println(teams.get(teamPosition).getTimeWorkedTogether());
+                }
+            }
+        }
+
+        for (Team team : teams){
+            team.setTimeWorkedTogether(team.getTimeWorkedTogether() / 2);
+        }
+
+        System.out.println("============= TEAMS INFO ================");
+        Team bestBuddiesTeam = null;
+        for (Team team : teams){
+            if(bestBuddiesTeam == null || bestBuddiesTeam.getTimeWorkedTogether() < team.getTimeWorkedTogether()){
+                bestBuddiesTeam = team;
+            }
+            System.out.println("employee " + team.getFirstEmpId() + " with " + team.getSecondEmpId() + " worked together for "
+                    + team.getTimeWorkedTogether() + " days");
+        }
+
+        if(bestBuddiesTeam == null){
+            System.out.println("Not enough people to form a team.");
+        }else {
+            System.out.println("\nThe team that has worked together for the longest is:\n"
+                    + bestBuddiesTeam.getFirstEmpId() + " and " + bestBuddiesTeam.getSecondEmpId() + " have worked for "
+                    + bestBuddiesTeam.getTimeWorkedTogether());
+        }
+
+        LocalDate localDate = LocalDate.parse("16-Aug-2016", DateTimeFormatter.ofPattern("d-MMM-yyyy"));
+        System.out.println(localDate.toEpochDay());
+        LocalDate dc = LocalDate.parse("2016-08-16", DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        System.out.println(dc.toEpochDay() - localDate.toEpochDay());
     }
 }
 
