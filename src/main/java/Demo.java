@@ -15,7 +15,7 @@ public class Demo {
         int currentShowing = 0;
 
         if(employees == null){
-            System.out.println("Information missing.");
+            System.out.println("Information missing. (path or file or employees)");
             return;
         }
         if(employees.isEmpty()){
@@ -40,10 +40,10 @@ public class Demo {
                 if(insideEmployee.getEmpId() == partnerEmployee.getEmpId()){
                     continue;
                 }
-                if(insideEmployee.getProjectId() == partnerEmployee.getProjectId() && areColliding(insideEmployee, partnerEmployee)){
+                if(insideEmployee.getProjectId() == partnerEmployee.getProjectId() && insideEmployee.isColliding(partnerEmployee)){
                     //verify how much time and check if the employees have as max that time.
                     int projectId = insideEmployee.getProjectId();
-                    long timeWorked = getEmployeesTimeLength(insideEmployee, partnerEmployee);
+                    long timeWorked = insideEmployee.getEmployeesTimeLength(partnerEmployee);
                     long insideEmpProjectTime = insideEmployee.getTimeSpentOnProjectWithPartner();
                     long partnerEmpProjectTime = partnerEmployee.getTimeSpentOnProjectWithPartner();
                     if(timeWorked > insideEmpProjectTime && timeWorked > partnerEmpProjectTime){
@@ -76,33 +76,6 @@ public class Demo {
                     + " | employee " + mostTimeEmployee.getPartnerId() + " | have worked together for "
                     + mostTimeEmployee.getTimeSpentOnProjectWithPartner() + " days");
         }
-    }
-
-    private static boolean areColliding(Employee firstEmployee, Employee secondEmployee){
-        if(firstEmployee.getDateTo().toEpochDay() < secondEmployee.getDateFrom().toEpochDay() ||
-                secondEmployee.getDateTo().toEpochDay() < firstEmployee.getDateFrom().toEpochDay()){
-            return false;
-        }
-        return true;
-    }
-
-    //use it after checking the collision
-    private static long getEmployeesTimeLength(Employee firstEmployee, Employee secondEmployee){
-        //calculate the total time that they have spent together.
-        long sharedStartingTime;
-        long sharedFinishingTime;
-        if(firstEmployee.getDateFrom().toEpochDay() < secondEmployee.getDateFrom().toEpochDay()){
-            sharedStartingTime = firstEmployee.getDateFrom().toEpochDay();
-        }else{
-            sharedStartingTime = secondEmployee.getDateFrom().toEpochDay();
-        }
-
-        if(firstEmployee.getDateTo().toEpochDay() < secondEmployee.getDateTo().toEpochDay()){
-            sharedFinishingTime = firstEmployee.getDateTo().toEpochDay();
-        }else{
-            sharedFinishingTime = secondEmployee.getDateTo().toEpochDay();
-        }
-        return sharedFinishingTime - sharedStartingTime; //returns the days they have been working together
     }
 }
 

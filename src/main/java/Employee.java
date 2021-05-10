@@ -102,7 +102,36 @@ public class Employee {
         //System.out.println(" --- " + (periodBetweenEmp1.get(ChronoUnit.DAYS) - periodBetweenEmp2.get(ChronoUnit.DAYS)));
         return periodBetweenEmp1.compareTo(periodBetweenEmp2);
     }
+
+    public boolean isColliding(Employee secondEmployee){
+        if(this.getDateTo().toEpochDay() < secondEmployee.getDateFrom().toEpochDay() ||
+                secondEmployee.getDateTo().toEpochDay() < this.getDateFrom().toEpochDay()){
+            return false;
+        }
+        return true;
+    }
+
+    //use it after checking the collision
+    public long getEmployeesTimeLength(Employee secondEmployee){
+        //calculate the total time that they have spent together.
+        long sharedStartingTime;
+        long sharedFinishingTime;
+        if(this.getDateFrom().toEpochDay() < secondEmployee.getDateFrom().toEpochDay()){
+            sharedStartingTime = this.getDateFrom().toEpochDay();
+        }else{
+            sharedStartingTime = secondEmployee.getDateFrom().toEpochDay();
+        }
+
+        if(this.getDateTo().toEpochDay() < secondEmployee.getDateTo().toEpochDay()){
+            sharedFinishingTime = this.getDateTo().toEpochDay();
+        }else{
+            sharedFinishingTime = secondEmployee.getDateTo().toEpochDay();
+        }
+        return sharedFinishingTime - sharedStartingTime; //returns the days they have been working together
+    }
 }
+
+
 
 /*
 class employee:
