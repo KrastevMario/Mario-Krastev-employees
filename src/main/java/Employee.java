@@ -1,16 +1,14 @@
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Period;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalAmount;
-import java.time.temporal.TemporalUnit;
-import java.util.Objects;
 
 public class Employee {
     private int empId;
     private int projectId;
     private LocalDate dateFrom;
     private LocalDate dateTo;
+    private int longestTeamProject; //insert the project in which you've worked the most with a partner
+    private int partnerId; //the partner from the project
+    private long timeSpentOnProjectWithPartner; //the time spent on the project
 
     public Employee(int empId, int projectId, LocalDate dateFrom, LocalDate dateTo){
         //do verifications
@@ -18,6 +16,29 @@ public class Employee {
         this.projectId = projectId;
         this.dateFrom = dateFrom;
         this.dateTo = dateTo;
+        this.longestTeamProject = -1;
+        this.partnerId = -1;
+        this.timeSpentOnProjectWithPartner = -1;
+    }
+
+    public Employee(){
+        this.empId = -1;
+        this.projectId = -1;
+        this.longestTeamProject = -1;
+        this.partnerId = -1;
+        this.timeSpentOnProjectWithPartner = -1;
+    }
+
+    public int getLongestTeamProject() {
+        return longestTeamProject;
+    }
+
+    public int getPartnerId() {
+        return partnerId;
+    }
+
+    public long getTimeSpentOnProjectWithPartner() {
+        return timeSpentOnProjectWithPartner;
     }
 
     public int getEmpId() {
@@ -34,6 +55,25 @@ public class Employee {
 
     public LocalDate getDateTo() {
         return dateTo;
+    }
+
+    public void setLongestTeamProject(int longestTeamProject) {
+        //TODO: make it throw an exception on wrong data
+        if(longestTeamProject < 0){
+            return;
+        }
+        this.longestTeamProject = longestTeamProject;
+    }
+
+    public void setPartnerId(int partnerId) {
+        if(partnerId <= 0){
+            return;
+        }
+        this.partnerId = partnerId;
+    }
+
+    public void setTimeSpentOnProjectWithPartner(long timeSpentOnProjectWithPartner) {
+        this.timeSpentOnProjectWithPartner = timeSpentOnProjectWithPartner;
     }
 
     //sorting by worker's time
